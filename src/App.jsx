@@ -1,9 +1,21 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+
+const UseEffectComponent = () => {
+  useEffect(() => {
+    return () => console.log("Компонент удален")
+  }, []);
+
+  return(
+    <div>
+      Тестовый компонент для удаления co страницы
+    </div>
+  )
+}
 
 const App = () => {
 
   const [count, setCount] = useState(0);
-  const [name, setName] = useState("");
+  const [name, setName] = useState("Абоба");
 
   const [skills, setSkills] = useState(["Front-End", "Back-End", "IC/CD"]);
 
@@ -11,6 +23,13 @@ const App = () => {
     email: "",
     password: "",
   });
+
+
+  console.log('За пределами useEffect рендер');
+
+  useEffect(() => {
+    console.log('Первый рендер');
+  }, [count, form]);
 
   const onChangeFormHandle = (e) => {
     setForm((prevState) => {
@@ -45,44 +64,48 @@ const App = () => {
       <button onClick={() => setCount((prev) => prev + 1)}>+ 1</button>
       <button onClick={() => setCount(count + 5)}>+ 5</button>
 
+    {
+      count >= 10 ? <h1>Компонент больше недоступен</h1> : <UseEffectComponent />
+    }
+
       <br />
 
-      <h1>Привет {name}!</h1>
+      <h1>Привет, {name}!</h1>
       <input type="text" onSubmit={(e) => onChangeHandle(e)} />
       <br />
       <input type="text" onKeyDown={(e) => onSubmitAddSkill(e)} />
 
-    <ul>
-      {
-        skills.map((skill) => {
-          return (
-            <li>{skill}</li>
-          )
-        })
-      }
-    </ul>
+      <ul>
+        {
+          skills.map((skill) => {
+            return (
+              <li>{skill}</li>
+            )
+          })
+        }
+      </ul>
 
-    <br />
+      <br />
 
-    <form onSubmit={(e) => e.preventDefault()}>
-      <label>Email:</label>
-      <input 
-        type="email" 
-        name="email" 
-        onChange={(e) => onChangeFormHandle(e)}
-        value={form.email} 
-      />
+      <form onSubmit={(e) => e.preventDefault()}>
+        <label>Email:</label>
+        <input 
+          type="email" 
+          name="email" 
+          onChange={(e) => onChangeFormHandle(e)}
+          value={form.email} 
+        />
 
-      <label>Password:</label>
-      <input 
-        type="password" 
-        name="password"
-        onChange={(e) => onChangeFormHandle(e)}
-        value={form.passworrd} 
-      />
+        <label>Password:</label>
+        <input 
+          type="password" 
+          name="password"
+          onChange={(e) => onChangeFormHandle(e)}
+          value={form.password} 
+        />
 
-      <button>Отправить форму</button>
-    </form>
+        <button>Отправить форму</button>
+      </form>
 
     </div>
   )
