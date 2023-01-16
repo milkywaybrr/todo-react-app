@@ -1,4 +1,13 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
+import styles from './App.module.css';
+
+const formatDate = (date) => {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDay();
+
+  return `${day}.${month}.${year}`;
+}
 
 const App = () => {
 
@@ -79,9 +88,9 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className={styles.main}>
       <div>
-        <form onSubmit={(e) => onSubmitHandle(e)}>
+        <form className={styles.newTodo} onSubmit={(e) => onSubmitHandle(e)}>
           <h2>Добавить задачу:</h2>
           <input 
             type="text" 
@@ -94,18 +103,18 @@ const App = () => {
       </div>
 
       {/* Все задачи */}
-      <div>
+      <div className={styles.allTodos}>
         {/* Одна задача */}
         {
           todos.map((todo) => {
             return(
-              <div>
-                <h3>{todo.name} ({todo.date.toString()})</h3>
-                <div>
+              <div className={styles.Todo}>
+                <h3>{todo.name} ({formatDate(todo.date)})</h3>
+                <div className={styles.buttons}>
                   <button onClick={() => onCheckedToggle(todo.id)}>
                     {todo.checked ? "Не выполнено" : "Выполнено"}
                   </button>
-                  <button onClick={() => onDeleteTodoById(todo.id)}>Удалить</button>
+                  <button className={styles.del} onClick={() => onDeleteTodoById(todo.id)}>Удалить</button>
                 </div>
               </div>
             )
