@@ -1,114 +1,119 @@
 import { useState, useEffect } from "react"
 
-const UseEffectComponent = () => {
-  useEffect(() => {
-    return () => console.log("Компонент удален")
-  }, []);
-
-  return(
-    <div>
-      Тестовый компонент для удаления co страницы
-    </div>
-  )
-}
-
 const App = () => {
 
-  const [count, setCount] = useState(0);
-  const [name, setName] = useState("Абоба");
+  // Состояние (данные задач)
+  const [todos, setTodos] = useState([
+    {
+      id: 1,
+      name: "Купить продукты",
+      date: new Date(),
+      checked: false
+    },
+    {
+      id: 2,
+      name: "Заправить авто",
+      date: new Date(),
+      checked: false
+    }
+  ]);
 
-  const [skills, setSkills] = useState(["Front-End", "Back-End", "IC/CD"]);
+  // Значение поля
+  const [value, setValue] = useState('');
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  // Функция обновления значения из поля
+  const onChangeHandle = (evt) => {
+    setValue(evt.target.value);
+  }
 
+  // Добавление задачи
+  const onSubmitHandle = (evt) => {
+    evt.preventDefault();
 
-  console.log('За пределами useEffect рендер');
+    setTodos((prevState) => {
+      prevState =[...prevState];
 
-  useEffect(() => {
-    console.log('Первый рендер');
-  }, [count, form]);
+      prevState.push({
+        id: Date.now(),
+        name: value,
+        date: new Date(),
+        checked: false
+      });
 
-  const onChangeFormHandle = (e) => {
-    setForm((prevState) => {
-      prevState = {...prevState};
+      return prevState;
+    });
 
-      prevState[e.target.name] = e.target.value;
+    setValue('');
+  }
+
+  // Функция переключения статуса задач
+  const onCheckedToggle = (id) => {
+    setTodos((prevState) => {
+      prevState = [...prevState];
+
+      prevState = prevState.map((todo) => {
+        if (todo.id === id) {
+          return {
+            ...todo,
+            checked: !todo.checked
+          }
+        }
+
+        return todo;
+      });
+
+      return prevState;
+    });
+  }
+  // Функция удаления todo из массива ID
+  const onDeleteTodoById = (id) => {
+    setTodos((prevState) => {
+      prevState = [...prevState];
+
+      // .filter()
+
+      prevState = prevState.filter((todo) => todo.id !== id)
 
       return prevState;
     });
   }
 
-  const onChangeHandle = (e) => {
-    setName(e.target.value);
-    setCount(e.target.value.length);
-  }
-
-  console.log(count,setCount);
-  console.log(skills,setSkills);
-
-  const onSubmitAddSkill = (e) => {
-    console.log(e);
-    if(e.keyCode === 13){
-      setSkills((prevState) => {
-        return [...prevState, e.target.value];
-      });
-    }
-  }
-
   return (
     <div>
-      <p>Вы нажали на меня {count} раз (а)</p>
-      <button onClick={() => setCount((prev) => prev + 1)}>+ 1</button>
-      <button onClick={() => setCount(count + 5)}>+ 5</button>
+      <div>
+        <form onSubmit={(e) => onSubmitHandle(e)}>
+          <h2>Добавить задачу:</h2>
+          <input 
+            type="text" 
+            placeholder="Купить молоко..." 
+            onChange={(e) => onChangeHandle(e)}
+            value={value}
+          />
 
-    {
-      count >= 10 ? <h1>Компонент больше недоступен</h1> : <UseEffectComponent />
-    }
+        </form>
+      </div>
 
-      <br />
-
-      <h1>Привет, {name}!</h1>
-      <input type="text" onSubmit={(e) => onChangeHandle(e)} />
-      <br />
-      <input type="text" onKeyDown={(e) => onSubmitAddSkill(e)} />
-
-      <ul>
+      {/* Все задачи */}
+      <div>
+        {/* Одна задача */}
         {
-          skills.map((skill) => {
-            return (
-              <li>{skill}</li>
+          todos.map((todo) => {
+            return(
+              <div>
+                <h3>{todo.name} ({todo.date.toString()})</h3>
+                <div>
+                  <button onClick={() => onCheckedToggle(todo.id)}>
+                    {todo.checked ? "Не выполнено" : "Выполнено"}
+                  </button>
+                  <button onClick={() => onDeleteTodoById(todo.id)}>Удалить</button>
+                </div>
+              </div>
             )
           })
         }
-      </ul>
-
-      <br />
-
-      <form onSubmit={(e) => e.preventDefault()}>
-        <label>Email:</label>
-        <input 
-          type="email" 
-          name="email" 
-          onChange={(e) => onChangeFormHandle(e)}
-          value={form.email} 
-        />
-
-        <label>Password:</label>
-        <input 
-          type="password" 
-          name="password"
-          onChange={(e) => onChangeFormHandle(e)}
-          value={form.password} 
-        />
-
-        <button>Отправить форму</button>
-      </form>
-
+      </div>
     </div>
-  )
+  );
 }
 
 export default App
