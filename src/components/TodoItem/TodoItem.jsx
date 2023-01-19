@@ -9,14 +9,16 @@ const TodoItem = ({ setTodos, todo}) => {
 
         prevState = prevState.map((todo) => {
             if (todo.id === id) {
-            return {
-                ...todo,
-                checked: !todo.checked
-            }
+                return {
+                    ...todo,
+                    checked: !todo.checked
+                }
             }
 
             return todo;
         });
+
+        localStorage.setItem('todos', JSON.stringify(prevState));
 
         return prevState;
         });
@@ -28,7 +30,9 @@ const TodoItem = ({ setTodos, todo}) => {
 
         // .filter()
 
-        prevState = prevState.filter((todo) => todo.id !== id)
+        prevState = prevState.filter((todo) => todo.id !== id);
+
+        localStorage.setItem('todos', JSON.stringify(prevState));
 
         return prevState;
         });
